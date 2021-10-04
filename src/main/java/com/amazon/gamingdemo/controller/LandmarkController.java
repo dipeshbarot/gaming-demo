@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(value = "LandmarkService", tags = "Landmark Service")
 @RestController
-@RequestMapping("/landmark")
+@RequestMapping("/landmark/v0.1")
 public class LandmarkController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LandmarkController.class);

@@ -5,7 +5,6 @@ import com.amazon.gamingdemo.dao.LandmarkDAO;
 import com.amazon.gamingdemo.dto.Routes;
 import com.amazon.gamingdemo.model.Node;
 import com.amazon.gamingdemo.model.Pair;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -49,7 +48,7 @@ public class LandmarkControllerTest {
 
     @Test
     void testAddLandmarkMappingsSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/mappings")
+        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/v0.1/mappings")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(getJsonFromObject(getRoutes()))
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -59,7 +58,7 @@ public class LandmarkControllerTest {
     @Test
     void testAddLandmarkMappingsFailure() throws Exception {
         // Bad Request - Empty Routes
-        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/mappings")
+        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/v0.1/mappings")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(getJsonFromObject(new Routes()))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -68,7 +67,7 @@ public class LandmarkControllerTest {
         // Bad Request - Empty Routes
         Routes routes = new Routes();
         routes.setRoutes(new HashSet<>());
-        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/mappings")
+        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/v0.1/mappings")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(getJsonFromObject(routes))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -77,7 +76,7 @@ public class LandmarkControllerTest {
         // Bad Request - Invalid Routes (missing distance)
         routes = new Routes();
         routes.setRoutes(Set.of("AB"));
-        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/mappings")
+        mockMvc.perform(MockMvcRequestBuilders.post("/landmark/v0.1/mappings")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(getJsonFromObject(routes))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -87,14 +86,14 @@ public class LandmarkControllerTest {
     @Test
     void testGetDistanceBetweenLandMarksSuccess() throws Exception {
         Mockito.when(landmarkDAO.getLandmarks()).thenReturn(getLandmarkMappings());
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/distance/A-D-E")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/distance/A-D-E")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$")
                         .value(10));
 
         // Nodes not connected
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/distance/A-E-C")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/distance/A-E-C")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$")
@@ -104,12 +103,12 @@ public class LandmarkControllerTest {
     @Test
     void testGetDistanceBetweenLandMarksFailure() throws Exception {
         // Route Not Found
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/distance/")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/distance/")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
 
         // Invalid separator
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/distance/A+D+E")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/distance/A+D+E")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
 
@@ -119,7 +118,7 @@ public class LandmarkControllerTest {
     @Test
     void testGetNumberOfRoutesBetweenNodesSuccess() throws Exception {
         Mockito.when(landmarkDAO.getLandmarks()).thenReturn(getLandmarkMappings());
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/routes/between/nodes/A/C")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/routes/between/nodes/A/C")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$")
@@ -129,24 +128,24 @@ public class LandmarkControllerTest {
     @Test
     void testGetNumberOfRoutesBetweenNodesFailure() throws Exception {
         // No destination given
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/routes/between/nodes/A/")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/routes/between/nodes/A/")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
 
         // Empty Landmarks
         Mockito.when(landmarkDAO.getLandmarks()).thenReturn(new HashMap<>());
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/routes/between/nodes/A/C")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/routes/between/nodes/A/C")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
 
         // Unknown Node
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/routes/between/nodes/A/J")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/routes/between/nodes/A/J")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
 
         // Any other error
         Mockito.when(landmarkDAO.getLandmarks()).thenThrow(new RuntimeException());
-        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/routes/between/nodes/A/C")
+        mockMvc.perform(MockMvcRequestBuilders.get("/landmark/v0.1/routes/between/nodes/A/C")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isInternalServerError());
     }
