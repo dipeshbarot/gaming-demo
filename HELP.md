@@ -6,15 +6,18 @@ The following was discovered as part of building this project:
 
 # Getting Started
 
+## Swagger URL
+http://gamingdemo-env.eba-rwkvdmcg.us-east-2.elasticbeanstalk.com/swagger-ui/
+
 ### Endpoints
-The below mentioned endpoints are available to meet the target requirements :
+The below-mentioned endpoints are available to meet the target requirements :
 
 #### /landmark/v0.1/mappings
 This endpoint is used to construct a graph of landmarks as per input. It accepts a set of string such that each string consists of a starting landmark, ending landmark and directed distance. Example: AB5, BC4, CD9, etc.
 
 Sample CURL request : 
 
-curl -X POST "http://gamingdemo-env.eba-ec9ecehs.us-east-2.elasticbeanstalk.com/landmark/v0.1/mappings" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"routes\": [ \"AB3\",\"BC9\",\"CD3\",\"DE6\",\"AD4\",\"DA5\",\"CE2\",\"AE4\",\"EB1\" ]}"
+curl -X POST "http://gamingdemo-env.eba-rwkvdmcg.us-east-2.elasticbeanstalk.com/landmark/v0.1/mappings" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"routes\": [ \"AB3\",\"BC9\",\"CD3\",\"DE6\",\"AD4\",\"DA5\",\"CE2\",\"AE4\",\"EB1\" ]}"
 
 
 #### /landmark/v0.1/distance/{route}
@@ -22,14 +25,14 @@ This endpoint is used to calculate the distance between landmarks via the given 
 
 Sample CURL request :
 
-curl -X GET "http://gamingdemo-env.eba-ec9ecehs.us-east-2.elasticbeanstalk.com/landmark/v0.1/distance/A-B-C" -H "accept: application/json"
+curl -X GET "http://gamingdemo-env.eba-rwkvdmcg.us-east-2.elasticbeanstalk.com/landmark/v0.1/distance/A-B-C" -H "accept: application/json"
 
 #### /landmark/v0.1/routes/between/nodes/{source}/{destination}
 This endpoint is used to calculate the number of different routes between landmarks. As per the requirement document, the maximum stops between landmarks is configured to 2. This is configured in application.yml file but it can be overridden at runtime passing it as a VM parameter. This endpoint takes 2 parameters - a source (string) and a destination (string). Example: A (source) and C (destination)
 
 Sample CURL request:
 
-curl -X GET "http://gamingdemo-env.eba-ec9ecehs.us-east-2.elasticbeanstalk.com/landmark/v0.1/routes/between/nodes/A/C" -H "accept: application/json"
+curl -X GET "http://gamingdemo-env.eba-rwkvdmcg.us-east-2.elasticbeanstalk.com/landmark/v0.1/routes/between/nodes/A/C" -H "accept: application/json"
 
 # Strategy to calculate minimum distance between nodes
 
@@ -46,6 +49,7 @@ A Dijkstra algorithm is implemented to calculate a minimum distance between node
 * Scaling policies can be configured as per usage pattern.
 * DR and backup strategies can be configured.
 * IAM Role can be configured with policies for restricting access
+* A certificate needs to be added by enabling support for HTTPS
 
 #CI/CD Strategy
 * A jenkins based pipeline can be setup for deployment of code
